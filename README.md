@@ -31,7 +31,7 @@ sudo bash basic-install.sh
 
 <!-- markdownlint-enable MD033 -->
 
-The Pi-hole is a [DNS sinkhole](https://en.wikipedia.org/wiki/DNS_Sinkhole) that protects your devices from unwanted content without installing any client-side software.
+The Pi-hole® is a [DNS sinkhole](https://en.wikipedia.org/wiki/DNS_Sinkhole) that protects your devices from unwanted content without installing any client-side software.
 
 - **Easy-to-install**: our dialogs walk you through the simple installation process in less than ten minutes
 - **Resolute**: content is blocked in _non-browser locations_, such as ad-laden mobile apps and smart TVs
