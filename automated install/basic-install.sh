@@ -2187,8 +2187,11 @@ main() {
     if [[ "${EUID}" -eq 0 ]]; then
         # they are root and all is good
         printf "  %b %s\\n" "${TICK}" "${str}"
-        # Show the Pi-hole logo so people know it's genuine since the logo and name are trademarked
+        # Show the Pi-hole logo so people know it's genuine since the logo and name are trademarked (YKES) (gentoo-port)
         show_ascii_berry
+        # Note that this is an unofficail port (gentoo-port)
+        gentoo_port_notice
+        
         make_temporary_log
     else
         # Otherwise, they do not have enough privileges, so let the user know
