@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script handles the meta package that contains all the dependencies needed for Pi-hole
+# This script creates the meta package that contains all the dependencies needed for Pi-hole
 
 # Write the config in place
 function gentoo_write_config() {
