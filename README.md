@@ -1,3 +1,24 @@
+# This repository is port of [Pi-hole](https://pi-hole.net) for Gentoo
+All changes made to the upstream source code can be searched with "*(gentoo-pihole)*". Additional scripts to enable functionality of the command-line `pihole` tool can be found in the *gentoo-scripts* directory. 
+
+## Changes
+- Add support for Portage's `emerge` as a package management tool
+- Create an overlay with a meta package for `pihole`'s dependencies
+
+
+## Installation
+As a result of keeping changes to the existing upstream scripts minimal, piping to bash won't work as an installation method for gentoo. 
+
+### To install this this port on Gentoo, clone this repository
+
+```bash
+git clone --depth 1 https://github.com/carlyle-felix/pi-hole.git Pi-hole
+cd "Pi-hole/automated install/"
+sudo bash basic-install.sh
+```
+
+
+
 <!-- markdownlint-configure-file { "MD004": { "style": "consistent" } } -->
 <!-- markdownlint-disable MD033 -->
 #
@@ -10,7 +31,7 @@
 
 <!-- markdownlint-enable MD033 -->
 
-The Pi-hole® is a [DNS sinkhole](https://en.wikipedia.org/wiki/DNS_Sinkhole) that protects your devices from unwanted content without installing any client-side software.
+The Pi-hole is a [DNS sinkhole](https://en.wikipedia.org/wiki/DNS_Sinkhole) that protects your devices from unwanted content without installing any client-side software.
 
 - **Easy-to-install**: our dialogs walk you through the simple installation process in less than ten minutes
 - **Resolute**: content is blocked in _non-browser locations_, such as ad-laden mobile apps and smart TVs
