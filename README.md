@@ -1,4 +1,4 @@
-# This repository is port of [Pi-hole](https://pi-hole.net) for Gentoo
+# This repository is an unofficial port of [Pi-hole](https://github.com/pi-hole/pi-hole) for Gentoo
 All changes made to the upstream source code can be searched with "*(gentoo-pihole)*". Additional scripts to enable functionality of the command-line `pihole` tool can be found in the *gentoo-scripts* directory. 
 
 ## Changes
@@ -17,7 +17,7 @@ cd "Pi-hole/automated install/"
 sudo bash basic-install.sh
 ```
 
-
+# Following is [Pi-Hole's Official README](https://raw.githubusercontent.com/pi-hole/pi-hole/refs/heads/master/README.md)
 
 <!-- markdownlint-configure-file { "MD004": { "style": "consistent" } } -->
 <!-- markdownlint-disable MD033 -->
