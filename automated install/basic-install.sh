@@ -27,6 +27,15 @@ export PATH+=':/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
 # Trap any errors, then exit
 trap abort INT QUIT TERM
 
+# Get the directory of the current script (gentoo-port)
+DIR_="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+# Point variable to previous directory (gentoo-port)
+DIR_="${DIR_%/*}"
+
+# Source gentoo-port scripts (gentoo-port)
+source "${DIR_}/gentoo-scripts/gentoo-port.sh"
+
 ######## VARIABLES #########
 # For better maintainability, we store as much information that can change in variables
 # This allows us to make a change in one place that can propagate to all instances of the variable
@@ -81,7 +90,10 @@ webroot="/var/www/html"
 # Two notable scripts are gravity.sh (used to generate the HOSTS file) and advanced/Scripts/webpage.sh (used to install the Web admin interface)
 webInterfaceGitUrl="https://github.com/pi-hole/web.git"
 webInterfaceDir="${webroot}/admin"
-piholeGitUrl="https://github.com/pi-hole/pi-hole.git"
+
+# Changed for gentoo port (gentoo-port)
+piholeGitUrl="https://github.com/carlyle-felix/pi-hole.git"
+
 PI_HOLE_LOCAL_REPO="/etc/.pihole"
 # List of pihole scripts, stored in an array
 PI_HOLE_FILES=(list piholeDebug piholeLogFlush setupLCD update version gravity uninstall webpage)
@@ -268,6 +280,11 @@ package_manager_detect() {
         PKG_COUNT="${PKG_MANAGER} check-update | grep -E '(.i686|.x86|.noarch|.arm|.src|.riscv64)' | wc -l || true"
         # The command we will use to remove packages (used in the uninstaller)
         PKG_REMOVE="${PKG_MANAGER} remove -y"
+
+		# Check for emerge (gentoo-port).
+		elif is_command emerge; then
+			gentoo_package_management set_package_manager
+
     # If neither apt-get or yum/dnf package managers were found
     else
         # we cannot install required packages
@@ -358,6 +375,10 @@ build_dependency_package(){
 
         # Move back into the directory the user started in
         popd &> /dev/null || return 1
+
+		# Generate gentoo repo (gentoo-port)
+		elif is_command emerge; then
+			gentoo_package_management generate_repo
 
     # If neither apt-get or yum/dnf package managers were found
     else
@@ -1391,6 +1412,9 @@ install_dependent_packages() {
             printf "  %b Error: Unable to find Pi-hole dependency package.\\n" "${COL_RED}"
             return 1
         fi
+		# Install Gentoo packages (gentoo-port)
+		elif is_command emerge; then
+				gentoo_package_management install_meta
 
     # If neither apt-get or yum/dnf package managers were found
     else
@@ -2215,8 +2239,11 @@ main() {
             update_package_cache || exit 1
     fi
 
-    # Notify user of package availability
-    notify_package_updates_available
+		# Skip this for gentoo port (gentoo-port)
+		if ! is_command emerge; then
+			# Notify user of package availability
+  	  notify_package_updates_available
+		fi
 
     # Build dependency package
     build_dependency_package
