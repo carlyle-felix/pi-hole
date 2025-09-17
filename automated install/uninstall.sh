@@ -90,6 +90,12 @@ removePiholeFiles() {
     ${SUDO} rm -f /usr/local/bin/pihole &> /dev/null
     ${SUDO} rm -f /etc/bash_completion.d/pihole &> /dev/null
     ${SUDO} rm -f /etc/sudoers.d/pihole &> /dev/null
+
+    # Remove portage overlay (gentoo-port)
+    if is_command emerge; then
+        gentoo_package_management remove_overlay
+    fi
+
     echo -e "  ${TICK} Removed config files"
 
     # Restore Resolved
