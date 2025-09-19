@@ -41,6 +41,6 @@ gentoo_package_management() {
 	# Remove the overlay when uninstalling pihole
 	elif [[ "${arg}" == "remove_overlay" ]]; then
 		${SUDO} rm -rf /var/db/repos/pihole-overlay &> /dev/null
-		${SUDO} rm /etc/portage/repos.conf/pihole.conf
+		${SUDO} rm /etc/portage/repos.conf/pihole.conf &> /dev/null
 	fi
 }
