@@ -31,7 +31,7 @@ gentoo_package_management() {
 	# set package manager variables
 	elif [[ "${arg}" == "set_package_manager" ]]; then
 		PKG_MANAGER="emerge"
-		PKG_INSTALL="${PKG_MANAGER} -avn"
+		PKG_INSTALL="${PKG_MANAGER} -auv"
 		PKG_REMOVE="${PKG_MANAGER} --deselect"
 
 	# Install the meta package
