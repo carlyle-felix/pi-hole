@@ -12,15 +12,6 @@ source "${DIR_}/gentoo-scripts/overlay.sh"
 # Pi-hole dependency meta package for Portage based sys>
 PIHOLE_META_PACKAGE_CONTROL_PORTAGE="pihole-meta"
 
-# Unofficial note
-gentoo_port_notice() {
-	echo -e "\033[1;35;40m"
-	echo -e ""
-	echo -e "          UNOFFICIAL GENTOO PORT"
-	echo -e "${COL_NC}"
-	echo -e ""
-}
-
 gentoo_package_management() {
 	local arg="$1"
 
