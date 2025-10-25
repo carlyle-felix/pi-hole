@@ -27,10 +27,11 @@ gentoo_package_management() {
 
 	# Install the meta package
 	elif [[ "${arg}" == "install_meta" ]]; then
-		eval "$PKG_INSTALL" "${PIHOLE_META_PACKAGE_CONTROL_PORTAGE}"
+		eval "${PKG_INSTALL}" "${PIHOLE_META_PACKAGE_CONTROL_PORTAGE}"
 
 	# Remove the overlay when uninstalling pihole
 	elif [[ "${arg}" == "remove_overlay" ]]; then
+		eval "${PKG_REMOVE}" "${PIHOLE_META_PACKAGE_CONTROL_PORTAGE}"
 		${SUDO} rm -rf /var/db/repos/pihole-overlay &> /dev/null
 		${SUDO} rm /etc/portage/repos.conf/pihole.conf &> /dev/null
 	fi
