@@ -375,22 +375,6 @@ check_firewalld() {
                     log_write "${CROSS} ${COL_RED}  Allow Service: ${i}${COL_NC} (${FAQ_HARDWARE_REQUIREMENTS_FIREWALLD})"
                 fi
             done
-            # check for custom FTL FirewallD zone
-            local firewalld_zones
-            firewalld_zones=$(firewall-cmd --get-zones)
-            if [[ "${firewalld_zones}" =~ "ftl" ]]; then
-                log_write "${TICK} ${COL_GREEN}FTL Custom Zone Detected${COL_NC}";
-                # check FTL custom zone interface: lo
-                local firewalld_ftl_zone_interfaces
-                firewalld_ftl_zone_interfaces=$(firewall-cmd --zone=ftl --list-interfaces)
-                if [[ "${firewalld_ftl_zone_interfaces}" =~ "lo" ]]; then
-                    log_write "${TICK} ${COL_GREEN}  Local Interface Detected${COL_NC}";
-                else
-                    log_write "${CROSS} ${COL_RED}  Local Interface Not Detected${COL_NC} (${FAQ_HARDWARE_REQUIREMENTS_FIREWALLD})"
-                fi
-            else
-                log_write "${CROSS} ${COL_RED}FTL Custom Zone Not Detected${COL_NC} (${FAQ_HARDWARE_REQUIREMENTS_FIREWALLD})"
-            fi
         fi
     else
         log_write "${TICK} ${COL_GREEN}Firewalld service not detected${COL_NC}";
@@ -1022,6 +1006,24 @@ show_db_entries() {
     )
 
     for line in "${entries[@]}"; do
+        # Use gray color for "no". Normal color for "yes"
+        line=${line//--no---/${COL_GRAY}  no   ${COL_NC}}
+        line=${line//--yes--/  yes  }
+
+        # Use red for "deny" and green for "allow"
+        if [ "$title" = "Domainlist" ]; then
+            line=${line//regex-deny/${COL_RED}regex-deny${COL_NC}}
+            line=${line//regex-allow/${COL_GREEN}regex-allow${COL_NC}}
+            line=${line//exact-deny/${COL_RED}exact-deny${COL_NC}}
+            line=${line//exact-allow/${COL_GREEN}exact-allow${COL_NC}}
+        fi
+
+        # Use red for "block" and green for "allow"
+        if [ "$title" = "Adlists" ]; then
+            line=${line//-BLOCK-/${COL_RED} Block ${COL_NC}}
+            line=${line//-ALLOW-/${COL_GREEN} Allow ${COL_NC}}
+        fi
+
         log_write "   ${line}"
     done
 
@@ -1069,15 +1071,15 @@ check_dhcp_servers() {
 }
 
 show_groups() {
-    show_db_entries "Groups" "SELECT id,CASE enabled WHEN '0' THEN '  no' WHEN '1' THEN '  yes' ELSE enabled END enabled,name,datetime(date_added,'unixepoch','localtime') date_added,datetime(date_modified,'unixepoch','localtime') date_modified,description FROM \"group\"" "4 7 50 19 19 50"
+    show_db_entries "Groups" "SELECT id,CASE enabled WHEN '0' THEN '--no---' WHEN '1' THEN '--yes--' ELSE enabled END enabled,name,datetime(date_added,'unixepoch','localtime') date_added,datetime(date_modified,'unixepoch','localtime') date_modified,description FROM \"group\"" "4 7 50 19 19 50"
 }
 
 show_adlists() {
-    show_db_entries "Adlists" "SELECT id,CASE enabled WHEN '0' THEN '  no' WHEN '1' THEN '  yes' ELSE enabled END enabled,GROUP_CONCAT(adlist_by_group.group_id) group_ids, CASE type WHEN '0' THEN 'Block' WHEN '1' THEN 'Allow' ELSE type END type, address,datetime(date_added,'unixepoch','localtime') date_added,datetime(date_modified,'unixepoch','localtime') date_modified,comment FROM adlist LEFT JOIN adlist_by_group ON adlist.id = adlist_by_group.adlist_id GROUP BY id;" "5 7 12 5 100 19 19 50"
+    show_db_entries "Adlists" "SELECT id,CASE enabled WHEN '0' THEN '--no---' WHEN '1' THEN '--yes--' ELSE enabled END enabled,GROUP_CONCAT(adlist_by_group.group_id) group_ids, CASE type WHEN '0' THEN '-BLOCK-' WHEN '1' THEN '-ALLOW-' ELSE type END type, address,datetime(date_added,'unixepoch','localtime') date_added,datetime(date_modified,'unixepoch','localtime') date_modified,comment FROM adlist LEFT JOIN adlist_by_group ON adlist.id = adlist_by_group.adlist_id GROUP BY id;" "5 7 12 7 100 19 19 50"
 }
 
 show_domainlist() {
-    show_db_entries "Domainlist" "SELECT id,CASE type WHEN '0' THEN 'exact-allow' WHEN '1' THEN 'exact-deny' WHEN '2' THEN 'regex-allow' WHEN '3' THEN 'regex-deny' ELSE type END type,CASE enabled WHEN '0' THEN '  no' WHEN '1' THEN '  yes' ELSE enabled END enabled,GROUP_CONCAT(domainlist_by_group.group_id) group_ids,domain,datetime(date_added,'unixepoch','localtime') date_added,datetime(date_modified,'unixepoch','localtime') date_modified,comment FROM domainlist LEFT JOIN domainlist_by_group ON domainlist.id = domainlist_by_group.domainlist_id GROUP BY id;" "5 11 7 12 100 19 19 50"
+    show_db_entries "Domainlist" "SELECT id,CASE type WHEN '0' THEN 'exact-allow' WHEN '1' THEN 'exact-deny' WHEN '2' THEN 'regex-allow' WHEN '3' THEN 'regex-deny' ELSE type END type,CASE enabled WHEN '0' THEN '--no---' WHEN '1' THEN '--yes--' ELSE enabled END enabled,GROUP_CONCAT(domainlist_by_group.group_id) group_ids,domain,datetime(date_added,'unixepoch','localtime') date_added,datetime(date_modified,'unixepoch','localtime') date_modified,comment FROM domainlist LEFT JOIN domainlist_by_group ON domainlist.id = domainlist_by_group.domainlist_id GROUP BY id;" "5 11 7 12 90 19 19 50"
 }
 
 show_clients() {

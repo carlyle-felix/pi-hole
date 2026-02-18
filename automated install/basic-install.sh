@@ -167,7 +167,7 @@ EOM
 )
 
 # List of required packages on APK based systems
-PIHOLE_META_VERSION_APK=0.1
+PIHOLE_META_VERSION_APK=0.2
 PIHOLE_META_DEPS_APK=(
     bash
     bash-completion
@@ -193,7 +193,6 @@ PIHOLE_META_DEPS_APK=(
     sudo
     tzdata
     unzip
-    wget
 )
 
 ######## Undocumented Flags. Shhh ########
@@ -1271,10 +1270,6 @@ install_manpage() {
         # if not present, create man8 directory
         install -d -m 755 /usr/local/share/man/man8
     fi
-    if [[ ! -d "/usr/local/share/man/man5" ]]; then
-        # if not present, create man5 directory
-        install -d -m 755 /usr/local/share/man/man5
-    fi
     # Testing complete, copy the files & update the man db
     install -D -m 644 -T ${PI_HOLE_LOCAL_REPO}/manpages/pihole.8 /usr/local/share/man/man8/pihole.8
 
@@ -1830,6 +1825,12 @@ clone_or_reset_repos() {
     # If the user wants to repair/update,
     if [[ "${repair}" == true ]]; then
         printf "  %b Resetting local repos\\n" "${INFO}"
+
+        # import getFTLConfigValue from utils.sh
+        source "/opt/pihole/utils.sh"
+        # Use the configured Web repo location on repair/update
+        webInterfaceDir=$(getFTLConfigValue "webserver.paths.webroot")$(getFTLConfigValue "webserver.paths.webhome")
+
         # Reset the Core repo
         resetRepo ${PI_HOLE_LOCAL_REPO} ||
             {
