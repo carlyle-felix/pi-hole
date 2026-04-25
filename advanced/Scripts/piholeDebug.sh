@@ -41,8 +41,10 @@ else
     #OVER="\r\033[K"
 fi
 
-# shellcheck source=/dev/null
-. /etc/pihole/versions
+# shellcheck source=./advanced/Scripts/utils.sh
+source /opt/pihole/utils.sh
+
+loadVersionFile /etc/pihole/versions
 
 # Read the value of an FTL config key. The value is printed to stdout.
 get_ftl_conf_value() {
@@ -92,9 +94,8 @@ PIHOLE_GRAVITY_DB_FILE="$(get_ftl_conf_value "files.gravity")"
 PIHOLE_FTL_DB_FILE="$(get_ftl_conf_value "files.database")"
 
 PIHOLE_COMMAND="${BIN_DIRECTORY}/pihole"
-PIHOLE_COLTABLE_FILE="${BIN_DIRECTORY}/COL_TABLE"
 
-FTL_PID="$(get_ftl_conf_value "files.pid")"
+FTL_PID="/run/pihole-FTL.pid" # Hardcoded PID path — see GHSA-6w8x-p785-6pm4
 
 PIHOLE_LOG="${LOG_DIRECTORY}/pihole.log"
 PIHOLE_LOG_GZIPS="${LOG_DIRECTORY}/pihole.log.[0-9].*"
@@ -117,7 +118,6 @@ REQUIRED_FILES=("${PIHOLE_CRON_FILE}"
 "${PIHOLE_FTL_CONF_FILE}"
 "${PIHOLE_DNSMASQ_CONF_FILE}"
 "${PIHOLE_COMMAND}"
-"${PIHOLE_COLTABLE_FILE}"
 "${FTL_PID}"
 "${PIHOLE_LOG}"
 "${PIHOLE_LOG_GZIPS}"
@@ -169,7 +169,7 @@ initialize_debug() {
     # Display that the debug process is beginning
     log_write "${COL_PURPLE}*** [ INITIALIZING ]${COL_NC}"
     # Timestamp the start of the log
-    log_write "${INFO} $(date "+%Y-%m-%d:%H:%M:%S") debug log has been initialized."
+    log_write "${INFO} $(date "+%Y-%m-%d %H:%M:%S") debug log has been initialized."
     # Uptime of the system
     # credits to https://stackoverflow.com/questions/28353409/bash-format-uptime-to-show-days-hours-minutes
     system_uptime=$(uptime | awk -F'( |,|:)+' '{if ($7=="min") m=$6; else {if ($7~/^day/){if ($9=="min") {d=$6;m=$8} else {d=$6;h=$8;m=$9}} else {h=$6;m=$7}}} {print d+0,"days,",h+0,"hours,",m+0,"minutes"}')
@@ -288,7 +288,7 @@ check_ftl_version() {
 
 # Checks the core version of the Pi-hole codebase
 check_component_versions() {
-    # Check the Web version, branch, and commit
+    # Check the Core version, branch, and commit
     compare_local_version_to_git_version "${CORE_GIT_DIRECTORY}" "Core"
     # Check the Web version, branch, and commit
     compare_local_version_to_git_version "${WEB_GIT_DIRECTORY}" "Web"

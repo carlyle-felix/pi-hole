@@ -100,11 +100,8 @@ status() {
 # catch sudden termination
 trap 'cleanup; exit 1' INT HUP TERM ABRT
 
-# Get FTL's PID file path
-FTL_PID_FILE="$(getFTLConfigValue files.pid)"
-
-# Get FTL's current PID
-FTL_PID="$(getFTLPID "${FTL_PID_FILE}")"
+# Get FTL's current PID (hardcoded PID path — see GHSA-6w8x-p785-6pm4)
+FTL_PID="$(getFTLPID /run/pihole-FTL.pid)"
 
 case "$1" in
   stop)

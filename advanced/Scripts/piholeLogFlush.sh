@@ -42,25 +42,6 @@ if [ -z "$WEBFILE" ]; then
     WEBFILE="/var/log/pihole/webserver.log"
 fi
 
-# Helper function to handle log rotation for a single file
-rotate_log() {
-    # This function copies x.log over to x.log.1
-    # and then empties x.log
-    # Note that moving the file is not an option, as
-    # dnsmasq would happily continue writing into the
-    # moved file (it will have the same file handler)
-    local logfile="$1"
-    if [[ "$*" != *"quiet"* ]]; then
-        echo -ne "  ${INFO} Rotating ${logfile} ..."
-    fi
-    cp -p "${logfile}" "${logfile}.1"
-    echo " " > "${logfile}"
-    chmod 640 "${logfile}"
-    if [[ "$*" != *"quiet"* ]]; then
-        echo -e "${OVER}  ${TICK} Rotated ${logfile} ..."
-    fi
-}
-
 # Helper function to handle log flushing for a single file
 flush_log() {
     local logfile="$1"
@@ -80,20 +61,12 @@ flush_log() {
 
 if [[ "$*" == *"once"* ]]; then
     # Nightly logrotation
-    if command -v /usr/sbin/logrotate >/dev/null; then
-        # Logrotate once
-
-        if [[ "$*" != *"quiet"* ]]; then
-            echo -ne "  ${INFO} Running logrotate ..."
-        fi
-        mkdir -p "${STATEFILE%/*}"
-        /usr/sbin/logrotate --force --state "${STATEFILE}" /etc/pihole/logrotate
-    else
-        # Handle rotation for each log file
-        rotate_log "${LOGFILE}"
-        rotate_log "${FTLFILE}"
-        rotate_log "${WEBFILE}"
+    # Logrotate once
+    if [[ "$*" != *"quiet"* ]]; then
+        echo -ne "  ${INFO} Running logrotate ..."
     fi
+    mkdir -p "${STATEFILE%/*}"
+    /usr/sbin/logrotate --force --state "${STATEFILE}" /etc/pihole/logrotate
 else
     # Manual flushing
     flush_log "${LOGFILE}"

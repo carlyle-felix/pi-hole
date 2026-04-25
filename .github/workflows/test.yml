@@ -36,6 +36,10 @@ jobs:
           severity: warning
           display-engine: sarif-fmt
 
+      - name: Secret Scanning with TruffleHog
+        uses: trufflesecurity/trufflehog@47e7b7cd74f578e1e3145d48f669f22fd1330ca6 #v3.94.3
+        with:
+          extra_args: --results=verified,unknown
 
       - name: Spell-Checking
         uses: codespell-project/actions-codespell@8f01853be192eb0f849a5c7d721450e7a467c579 #v2.2
@@ -43,13 +47,13 @@ jobs:
           ignore_words_file: .codespellignore
 
       - name: Get editorconfig-checker
-        uses: editorconfig-checker/action-editorconfig-checker@4b6cd6190d435e7e084fb35e36a096e98506f7b9 #v2.1.0
+        uses: editorconfig-checker/action-editorconfig-checker@840e866d93b8e032123c23bac69dece044d4d84c #v2.2.0
 
       - name: Run editorconfig-checker
         run: editorconfig-checker
 
       - name: Check python code formatting with black
-        uses: psf/black@6305bf1ae645ab7541be4f5028a86239316178eb #26.1.0
+        uses: psf/black@c6755bb741b6481d6b3d3bb563c83fa060db96c9 #26.3.1
         with:
           src: "./test"
           options: "--check --diff --color"
